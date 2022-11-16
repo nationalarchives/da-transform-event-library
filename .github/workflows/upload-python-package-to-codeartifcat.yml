@@ -1,4 +1,4 @@
-name: Update Transform Event Library Package.
+name: Workflow to update the transform event library package.
 on:
   push:
     branches:
@@ -12,23 +12,29 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-python@v2
+      - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
+          cache: 'pip'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine
+      - name: Run Tests
+      - run : |
+          cd tre_lib
+          python3 -m unittest discover ./tests -p 'test_*.py'
+      - name: Assume AWS role
       - uses: aws-actions/setup-sam@v1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
-          role-to-assume: ${{ secrets.MANAGEMENT_ACC_ARN }}
-          aws-region: eu-west-2
+          role-to-assume: ${{ secrets.ROLE_ARN }}
+          aws-region: ${{ secrets.REGION }}
           role-session-name: InternalGitHubActionsRoleName
       - name: Build and publish
         run: |
           export TWINE_USERNAME=aws
-          export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain tna-test-domain --domain-owner ${{ secrets.MANAG_ACC_NUM }} --region eu-west-2 --query authorizationToken --output text`
-          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain tna-test-domain --domain-owner ${{ secrets.MANAG_ACC_NUM }} --repository tna-test-repo --region eu-west-2 --format pypi --query repositoryEndpoint --output text`          
+          export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
+          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
