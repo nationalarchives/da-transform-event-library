@@ -34,7 +34,9 @@ jobs:
       - name: Build and publish
         run: |
           export TWINE_USERNAME=aws
-          export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
-          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
+          export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
+          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
+      - name: Smoke test
+        
