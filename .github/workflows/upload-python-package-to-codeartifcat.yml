@@ -2,7 +2,7 @@ name: Workflow to update the transform event library package.
 on:
   push:
     branches:
-      - change this
+      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 jobs:
   deploy-lambda:
     runs-on: ubuntu-latest
@@ -38,5 +38,12 @@ jobs:
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
-      - name: Smoke test
-        
+      - name: Sleep for 30 seconds
+        uses: jakejarvis/wait-action@master
+        with:
+            time: '5m'
+      - name: Smoke test # These are commented out because this step will fail on the first run.
+        run:
+          aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
+          pip install trelib
+
