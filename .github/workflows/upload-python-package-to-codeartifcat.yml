@@ -24,7 +24,6 @@ jobs:
       - run : |
           cd tre_lib
           python3 -m unittest discover ./tests -p 'test_*.py'
-      - name: Assume AWS role
       - uses: aws-actions/setup-sam@v1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -38,7 +37,6 @@ jobs:
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
-      - name: Sleep for 30 seconds
       - uses: jakejarvis/wait-action@master
         with:
           time: '5m'
