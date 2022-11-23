@@ -41,9 +41,9 @@ jobs:
       - name: Sleep for 30 seconds
       - uses: jakejarvis/wait-action@master
         with:
-            time: '5m'
+          time: '5m'
       - name: Smoke test # These are commented out because this step will fail on the first run.
-      - run:
+      - run: |
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
           pip install trelib
 
