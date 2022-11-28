@@ -2,7 +2,7 @@ name: Workflow to update the transform event library package.
 on:
   push:
     branches:
-      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
+      - main
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
@@ -18,7 +18,7 @@ jobs:
           cache: 'pip'
       - run: |
           python -m pip install --upgrade pip
-          pip install setuptools wheel twine jsonschema
+          pip install -r requirements.txt
       - run : |
           cd tre_lib
           python3 -m unittest discover ./tests -p 'test_*.py'

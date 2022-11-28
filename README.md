@@ -1,31 +1,36 @@
-# tre-lib
+# tre-lib Package
 
-Common TRE Python library.
+Common Python Tre API for lambda functions.
 
-To build:
+You can find a comprehensive read a comprehensive read through for updating setting up
+code repository and domains [at this link here](https://github.com/nationalarchives/da-transform-dev-documentation/blob/master/runbooks/github-actions/uploading_software_to_artifactory.md)
 
-1. Ensure the version is set correctly in [`version.sh`](./version.sh)
-2. Run [`./build.sh`](./build.sh)
+The current domain for this package is - tna-da-transform-domain
+The current repository is - tna-transform-artifacts
 
-Build output file (type `whl`) is created in the `./dist/` folder.
+### Updating the package
 
-To run tests (from this folder):
+Changes can be made in the repo, if these changes are merged into the main branch they will trigger the workflow
+to update the package.
 
-```
-# python3 runs in lib/tre_lib/tre_lib
-(cd tre_lib && python3 -m unittest discover ./tests -p 'test_*.py')
-```
+**NOTE :** If any alterations need to be made to this package, please remember to update the "version" parameter in
+the setup.py file, or the package will fail to update due to a versioning conflict.
 
-To install:
+**ADDITIONAL NOTE:** The workflow that updates this package also runs the local tests, so these will need to pass 
+in order to update this package. 
 
-```
-pip3 install "$(find dist -name 'tre_lib*.whl')"
-```
+### Building the package
 
-To uninstall:
+This package can be installed via pip - it does however require the user to alter pip's upstream source to use AWS
+Codeartifact
 
-```
-pip3 uninstall tre_lib --yes
+```bash
+
+export CODEARTIFACT_AUTH_TOKEN=`aws aws codeartifact get-authorization-token --domain ${DOMAIN} --domain-owner ${ARN_NUMBER} --region ${REGION} --query authorizationToken --output text``
+
+pip config set global.index-url https://aws:$CODEARTIFACT_AUTH_TOKEN@${DOMAIN}-${ARN_NUMBER}.d.codeartifact.eu-west-2.amazonaws.com/pypi/${REPOSITORY}/simple/
+
+pip install s3lib
 ```
 
 # Notes
