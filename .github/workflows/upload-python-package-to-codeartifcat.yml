@@ -16,11 +16,9 @@ jobs:
         with:
           python-version: '3.8'
           cache: 'pip'
-      #- name: Install dependencies
       - run: |
           python -m pip install --upgrade pip
           pip install setuptools wheel twine jsonschema
-      #- name: Run Tests
       - run : |
           cd tre_lib
           python3 -m unittest discover ./tests -p 'test_*.py'
@@ -30,7 +28,6 @@ jobs:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: ${{ secrets.REGION }}
           role-session-name: InternalGitHubActionsRoleName
-      #- name: Build and publish
       - run: |
           export TWINE_USERNAME=aws
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
@@ -40,7 +37,6 @@ jobs:
       - uses: jakejarvis/wait-action@master
         with:
           time: '5m'
-      #- name: Smoke test # These are commented out because this step will fail on the first run.
       - run: |
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
           pip install trelib
