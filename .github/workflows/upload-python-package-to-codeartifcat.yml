@@ -2,7 +2,7 @@ name: Workflow to update the transform event library package.
 on:
   push:
     branches:
-      - main
+      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 jobs:
   deploy-package:
     runs-on: ubuntu-latest

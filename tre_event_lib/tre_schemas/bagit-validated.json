@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://nationalarchives.gov.uk/da-transform/tre/schemas/bagit-validated",
+  "$ref": "https://nationalarchives.gov.uk/da-transform/tre/schemas/tre-event",
+  "type": "object",
+  "properties": {
+    "producer": {
+      "type": "object",
+      "properties": {
+        "event-name": {
+          "type": "string",
+          "enum": [
+            "bagit-validated"
+          ],
+          "description": "The name of the event being propagated for this event it should always be bagit-validated"
+        }
+      }
+    },
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "bagit-validated": {
+          "type": "object",
+          "properties": {
+            "reference": {
+              "type": "string",
+              "description": "From input message parameters.new-bagit.reference"
+            },
+            "s3-bucket": {
+              "type": "string",
+              "description": "The TRE S3 bucket used to extract and verify the BagIt"
+            },
+            "s3-bagit-name": {
+              "type": "string",
+              "description": "The TRE S3 path of the saved input BagIt file"
+            },
+            "s3-object-root": {
+              "type": "string",
+              "description": "The TRE S3 folder where the input BagIt file is extracted"
+            },
+            "validated-files": {
+              "type": "object",
+              "properties": {
+                "path": {
+                  "type": "string",
+                  "description":"A dictionary with lists of validated files"
+                },
+                "root": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "The TRE S3 folder where the input BagIt file is extracted"
+                  }
+                },
+                "data": {
+                  "type": "array",
+                  "items": {
+                    "type": "string",
+                    "description": "a list of the files contained within the consignment, including the full filepath"
+                  }
+                }
+              },
+              "required": [
+                "path",
+                "root",
+                "data"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "reference",
+            "s3-bucket",
+            "s3-bagit-name",
+            "s3-object-root",
+            "validated-files"
+          ],
+          "additionalProperties": false
+        }
+      }
+    },
+    "required": [
+      "parameters"
+    ],
+    "additionalProperties": false
+  }
+}
