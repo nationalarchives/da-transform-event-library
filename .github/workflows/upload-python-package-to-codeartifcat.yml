@@ -21,7 +21,7 @@ jobs:
           pip install -r requirements.txt
       - run : |
           cd tre_event_lib
-          python3 -m unittest discover ./tests -p 'test_*.py'
+          python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
       - uses: aws-actions/setup-sam@v1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
