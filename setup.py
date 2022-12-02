@@ -1,7 +1,7 @@
 import setuptools
 
 setuptools.setup(
-    name='trelib',
+    name='tre-event-lib',
     version="0.0.4",
     description='TRE Events Library',
     packages=['tre_event_lib.tre_schemas', 'tre_event_lib'],

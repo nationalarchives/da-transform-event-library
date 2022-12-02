@@ -2,7 +2,7 @@ name: Workflow to update the transform event library package.
 on:
   push:
     branches:
-      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
+      - main
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
@@ -26,17 +26,14 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: ${{ secrets.REGION }}
-          role-session-name: InternalGitHubActionsRoleName
+          role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - run: |
-          export TWINE_USERNAME=aws
+          export TWINE_USERNAME= ${{ secrets.USER_NAME }} 
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
-      - uses: jakejarvis/wait-action@master
-        with:
-          time: '5m'
-      - run: |
+          sleep 2m
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
-          pip install trelib
+          pip install tre-event-lib 
 
