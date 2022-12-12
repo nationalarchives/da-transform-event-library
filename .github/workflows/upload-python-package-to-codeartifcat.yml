@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
@@ -42,6 +41,6 @@ jobs:
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --repository ${{ secrets.REPOSITORY }} --region ${{ secrets.REGION }} --format pypi --query repositoryEndpoint --output text`          
           python setup.py sdist bdist_wheel --verbose
           twine upload dist/*
-          sleep 2m
+          sleep 10s
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
           pip install tre-event-lib
