@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
@@ -39,7 +40,6 @@ jobs:
       - run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
           git push origin ${{ steps.build-tag.outputs.next-version }}
-      - name: Push package to CodeArtifact
       - run: |
           export TWINE_USERNAME= ${{ secrets.USER_NAME }} 
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region eu-west-2 --query authorizationToken --output text`
