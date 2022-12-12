@@ -21,7 +21,7 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
       - run : |
-          python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
+          # python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
       - name: Get the version to use to tag this build
         id: build-tag
         uses: nationalarchives/tre-github-actions/.github/actions/get-next-version@0.0.1
