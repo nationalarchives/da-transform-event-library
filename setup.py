@@ -2,7 +2,8 @@ import setuptools
 
 setuptools.setup(
     name='tre-event-lib',
-    version="0.0.4",
+    use_scm_version=True,
+    setup_requires=['setuptools_scm'],
     description='TRE Events Library',
     packages=['tre_event_lib.tre_schemas', 'tre_event_lib'],
     package_data={'tre_event_lib.tre_schemas': ['*.json']},

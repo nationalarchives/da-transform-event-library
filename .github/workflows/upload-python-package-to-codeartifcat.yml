@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
@@ -21,6 +22,14 @@ jobs:
           pip install -r requirements.txt
       - run : |
           python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
+      - name: Get the version to use to tag this build
+        id: build-tag
+        uses: nationalarchives/tre-github-actions/.github/actions/get-next-version@0.0.1
+        with:
+          repo-name: ${{ github.event.repository.name }}
+      - name: Diagnostic info
+        run: |
+          printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
       - uses: aws-actions/setup-sam@v1
       - uses: aws-actions/configure-aws-credentials@v1
         with:
@@ -35,5 +44,4 @@ jobs:
           twine upload dist/*
           sleep 2m
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
-          pip install tre-event-lib 
-
+          pip install tre-event-lib
