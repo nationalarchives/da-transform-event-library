@@ -8,6 +8,9 @@ setuptools.setup(
     setup_requires=['setuptools_scm'],
     description='TRE Events Library',
     packages=['tre_event_lib.tre_schemas', 'tre_event_lib'],
-    package_data={'tre_event_lib.tre_schemas': ['*.json']},
+    package_data={'tre_event_lib.tre_schemas': ['*.json'],
+                  'tre_event_lib': [
+                      'about.json'
+                  ]},
     python_requires='>=3.8'
 )
