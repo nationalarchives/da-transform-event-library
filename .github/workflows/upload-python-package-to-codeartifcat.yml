@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/DTE-466_deploy_tre_lib_to_code_artifactory
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
