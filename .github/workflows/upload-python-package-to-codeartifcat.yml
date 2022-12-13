@@ -10,21 +10,12 @@ permissions:
 jobs:
   deploy-package:
     runs-on: ubuntu-latest
-    permissions:
-      packages: write
-      contents: read
-      id-token: write
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-python@v4
         with:
           python-version: '3.8'
           cache: 'pip'
-      - run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-      - run : |
-          # python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
       - name: Get the version to use to tag this build
         id: build-tag
         uses: nationalarchives/tre-github-actions/.github/actions/get-next-version@0.0.1
@@ -33,6 +24,12 @@ jobs:
       - name: Diagnostic info
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+      - run : |
+          printf '{\n  "version": "%s"\n}\n' "${{ steps.build-tag.outputs.next-version }}" > "tre_event_lib/about.json"
+      - run : |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+          python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
       - name: Add Git tag for this build
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
