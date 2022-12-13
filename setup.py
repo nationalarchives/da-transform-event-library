@@ -1,11 +1,11 @@
 import setuptools
+import os
+
+build_version = os.environ['BUILD_VERSION']
 
 setuptools.setup(
     name='tre-event-lib',
-    use_scm_version={
-        'version_scheme': 'release-branch-semver',
-    },
-    setup_requires=['setuptools_scm'],
+    version=build_version,
     description='TRE Events Library',
     packages=['tre_event_lib.tre_schemas', 'tre_event_lib'],
     package_data={'tre_event_lib.tre_schemas': ['*.json'],
