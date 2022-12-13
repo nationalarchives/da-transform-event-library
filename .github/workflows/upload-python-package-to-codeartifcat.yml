@@ -47,7 +47,10 @@ jobs:
           echo "printing folder contents_2" 
           ls -la
           cat tre_event_lib/about.json
-          python setup.py sdist bdist_wheel --verbose
+          python --version 
+          python setup.py bdist_wheel --verbose
+          echo "listing wheel output" 
+          unzip -l dist/*.whl
           twine upload dist/*
           sleep 10s
           aws codeartifact login --tool pip --repository ${{ secrets.REPOSITORY }} --domain ${{ secrets.DOMAIN }} --domain-owner ${{ secrets.MANAGEMENT_ARN_NUMBER }} --region ${{ secrets.REGION }}
