@@ -8,3 +8,6 @@ __pycache__/
 /tre_event_lib/about.json
 venv*/
 .venv*/
+build/
+dist/
+*.egg-info
