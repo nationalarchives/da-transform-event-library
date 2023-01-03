@@ -15,7 +15,7 @@ jobs:
           submodules: recursive
       - uses: actions/setup-python@v4
         with:
-          python-version: '3.8'
+          python-version: '3.9'
           cache: 'pip'
       - name: Get the version to use to tag this build
         id: build-tag
