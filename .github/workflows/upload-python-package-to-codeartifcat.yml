@@ -40,6 +40,7 @@ jobs:
           python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
       - name : Build dist package
         run : |
+          export BUILD_VERSION="${{ steps.build-tag.outputs.next-version }}"
           python setup.py bdist_wheel --verbose
       - name: setup-sam (main branch only)
         uses: aws-actions/setup-sam@v1
@@ -54,7 +55,6 @@ jobs:
       - name: Deploy to AWS CodeArtifact (main branch only)
         if: github.ref == 'refs/head/main'
         run: |
-          export BUILD_VERSION="${{ steps.build-tag.outputs.next-version }}"
           export TWINE_USERNAME=${{ secrets.AWS_USER_NAME }} 
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --region eu-west-2 --query authorizationToken --output text`
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --region ${{ secrets.AWS_REGION }} --format pypi --query repositoryEndpoint --output text`          
