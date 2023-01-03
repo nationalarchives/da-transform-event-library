@@ -42,6 +42,9 @@ jobs:
         run : |
           export BUILD_VERSION="${{ steps.build-tag.outputs.next-version }}"
           python setup.py bdist_wheel --verbose
+      - name : Inspect dist package (diagnostic)
+        run : |
+          unzip -l "$(find dist -name '*.whl')"
       - name: setup-sam (main branch only)
         uses: aws-actions/setup-sam@v1
         if: github.ref == 'refs/head/main'
