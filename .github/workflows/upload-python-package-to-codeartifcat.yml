@@ -3,6 +3,7 @@ on:
   push:
     branches:
       - main
+      - feature/**
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
@@ -10,10 +11,12 @@ jobs:
   deploy-package:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout with submodules (recursive)
+        uses: actions/checkout@v3
         with:
           submodules: recursive
-      - uses: actions/setup-python@v4
+      - name: Setup Python
+        uses: actions/setup-python@v4
         with:
           python-version: '3.9'
           cache: 'pip'
@@ -25,29 +28,42 @@ jobs:
       - name: Diagnostic info
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
-      - run : |
-          printf '{\n  "version": "%s"\n}\n' "${{ steps.build-tag.outputs.next-version }}" > "tre_event_lib/about.json"
-      - run : |
+      - name: Install Python dependencies
+        run : |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+      - name : Create about.json version file
+        run : |
+          printf '{\n  "version": "%s"\n}\n' "${{ steps.build-tag.outputs.next-version }}" > "tre_event_lib/about.json"
+      - name : Run tests
+        run : |
           python3 -m unittest discover ./tre_event_lib/tests -p 'test_*.py'
-      - uses: aws-actions/setup-sam@v1
-      - uses: aws-actions/configure-aws-credentials@v1
+      - name : Build dist package
+        run : |
+          python setup.py bdist_wheel --verbose
+      - name: setup-sam (main branch only)
+        uses: aws-actions/setup-sam@v1
+        if: github.ref == 'refs/head/main'
+      - name: configure-aws-credentials (main branch only)
+        uses: aws-actions/configure-aws-credentials@v1
+        if: github.ref == 'refs/head/main'
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN}}
           aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
-      - run: |
+      - name: Deploy to AWS CodeArtifact (main branch only)
+        if: github.ref == 'refs/head/main'
+        run: |
           export BUILD_VERSION="${{ steps.build-tag.outputs.next-version }}"
           export TWINE_USERNAME=${{ secrets.AWS_USER_NAME }} 
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --region eu-west-2 --query authorizationToken --output text`
           export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --region ${{ secrets.AWS_REGION }} --format pypi --query repositoryEndpoint --output text`          
-          python setup.py bdist_wheel --verbose
           twine upload dist/*
           sleep 10s
           aws codeartifact login --tool pip --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT}} --region ${{ secrets.AWS_REGION }}
           pip install tre-event-lib
-      - name: Add Git tag for this build
+      - name: Add Git tag for this build (main branch only)
+        if: github.ref == 'refs/head/main'
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
           git push origin ${{ steps.build-tag.outputs.next-version }}
