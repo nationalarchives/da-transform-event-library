@@ -29,6 +29,9 @@ jobs:
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
           printf 'github.ref=%s\n' "${{ github.ref }}"
+          printf 'github.head_ref=%s\n' "${{ github.head_ref }}"
+          printf 'github.ref_name=%s\n' "${{ github.ref_name }}"
+          printf 'branch=%s\n' "${{ github.head_ref || github.ref_name }}"
       - name: Install Python dependencies
         run : |
           python -m pip install --upgrade pip
