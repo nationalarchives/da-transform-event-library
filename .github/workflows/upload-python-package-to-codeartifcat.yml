@@ -28,6 +28,7 @@ jobs:
       - name: Diagnostic info
         run: |
           printf 'steps.build-tag.outputs.next-version=%s\n' "${{ steps.build-tag.outputs.next-version }}"
+          printf 'github.ref=%s\n' "${{ github.ref }}"
       - name: Install Python dependencies
         run : |
           python -m pip install --upgrade pip
