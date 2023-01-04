@@ -51,16 +51,16 @@ jobs:
           unzip -l "$(find dist -name '*.whl')"
       - name: setup-sam (main branch only)
         uses: aws-actions/setup-sam@v1
-        if: github.ref == 'refs/head/main'
+        if: github.ref_name == 'main'
       - name: configure-aws-credentials (main branch only)
         uses: aws-actions/configure-aws-credentials@v1
-        if: github.ref == 'refs/head/main'
+        if: github.ref_name == 'main'
         with:
           role-to-assume: ${{ secrets.AWS_OPEN_ID_CONNECT_ROLE_ARN}}
           aws-region: ${{ secrets.AWS_REGION }}
           role-session-name: role-session-name-${{ github.actor }}-${{ github.triggering_actor }}
       - name: Deploy to AWS CodeArtifact (main branch only)
-        if: github.ref == 'refs/head/main'
+        if: github.ref_name == 'main'
         run: |
           export TWINE_USERNAME=${{ secrets.AWS_USER_NAME }} 
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --region eu-west-2 --query authorizationToken --output text`
@@ -70,7 +70,7 @@ jobs:
           aws codeartifact login --tool pip --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT}} --region ${{ secrets.AWS_REGION }}
           pip install tre-event-lib
       - name: Add Git tag for this build (main branch only)
-        if: github.ref == 'refs/head/main'
+        if: github.ref_name == 'main'
         run: |
           git tag ${{ steps.build-tag.outputs.next-version }}
           git push origin ${{ steps.build-tag.outputs.next-version }}
