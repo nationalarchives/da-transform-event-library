@@ -3,7 +3,6 @@ on:
   push:
     branches:
       - main
-      - feature/**
 permissions:
   id-token: write  # required by aws-actions/configure-aws-credentials
   contents: write  # to push new git tag
