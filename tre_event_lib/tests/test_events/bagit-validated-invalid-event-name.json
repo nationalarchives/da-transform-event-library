@@ -20,11 +20,7 @@
                 "s3-bucket": "",
                 "s3-bagit-name": "",
                 "s3-object-root": "",
-                "validated-files": {
-                    "path": "",
-                    "root": [],
-                    "data": []
-                }
+                "validated-files": ""
             }
         }
     }
