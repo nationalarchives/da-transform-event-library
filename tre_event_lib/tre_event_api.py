@@ -46,6 +46,7 @@ KEY_PARAMETERS = 'parameters'
 KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3-bucket'
 KEY_ERRORS = 'errors'
+INTERNAL_MESSAGES = ["bagit-received"]
 
 ROOT_EVENT = 'tre-event'
 SCHEMA_SUFFIX = '.json'
@@ -191,15 +192,21 @@ def create_event(
         validate_event(event=prior_event, schema_name=prior_event_schema_name)
         logger.info('copying prior_event UUIDs')
         # Use [:] to copy (not reference) prior UUIDs
-        event_uuids = prior_event[KEY_UUIDS][:]        
+        event_uuids = prior_event[KEY_UUIDS][:]
     else:
         logger.info('no prior_event found')
 
-    # Create new UUID and corresponding key name (with producer name)
-    key_uuid = f'{producer}{UUID_KEY_SUFFIX}'
-    event_uuid = str(uuid.uuid4())
-    logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
-    event_uuids.append({key_uuid: event_uuid})
+    # Create new UUID and corresponding key name (with producer name), per step function
+    if process not in INTERNAL_MESSAGES:
+        key_uuid = f'{producer}{UUID_KEY_SUFFIX}'
+        event_uuid = str(uuid.uuid4())
+        logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
+        event_uuids.append({key_uuid: event_uuid})
+
+    # No more than 2 UUID should exist in the block to allow chaining without excessive UUIDs being produced.
+
+    if len(event_uuids) > 2:
+        event_uuids.pop(0)
 
     # Set event's type; prefer consignment_type parameter, fall back to prior
     # message type
