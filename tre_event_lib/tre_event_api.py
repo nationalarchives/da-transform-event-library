@@ -203,11 +203,6 @@ def create_event(
         logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
         event_uuids.append({key_uuid: event_uuid})
 
-    # No more than 2 UUID should exist in the block to allow chaining without excessive UUIDs being produced.
-
-    if len(event_uuids) > 2:
-        event_uuids.pop(0)
-
     # Set event's type; prefer consignment_type parameter, fall back to prior
     # message type
     event_type = None
