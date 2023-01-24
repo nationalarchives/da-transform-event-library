@@ -46,7 +46,6 @@ KEY_PARAMETERS = 'parameters'
 KEY_REFERENCE = 'reference'
 KEY_S3_BUCKET = 's3-bucket'
 KEY_ERRORS = 'errors'
-INTERNAL_MESSAGES = ["bagit-received"]
 
 ROOT_EVENT = 'tre-event'
 SCHEMA_SUFFIX = '.json'
@@ -168,7 +167,8 @@ def create_event(
     consignment_type: str = None,  # consignment_type as "type" shadows Python
     prior_event: dict = None,
     event_schema_name: str = None,
-    prior_event_schema_name: str = None
+    prior_event_schema_name: str = None,
+    add_uuid: bool = True
 ) -> dict:
     """
     Create a TRE event from the given arguments. The event has a new UUID
@@ -197,7 +197,7 @@ def create_event(
         logger.info('no prior_event found')
 
     # Create new UUID and corresponding key name (with producer name), per step function
-    if process not in INTERNAL_MESSAGES:
+    if add_uuid:
         key_uuid = f'{producer}{UUID_KEY_SUFFIX}'
         event_uuid = str(uuid.uuid4())
         logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
