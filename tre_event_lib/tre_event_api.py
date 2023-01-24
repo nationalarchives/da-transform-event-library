@@ -167,7 +167,8 @@ def create_event(
     consignment_type: str = None,  # consignment_type as "type" shadows Python
     prior_event: dict = None,
     event_schema_name: str = None,
-    prior_event_schema_name: str = None
+    prior_event_schema_name: str = None,
+    add_uuid: bool = True
 ) -> dict:
     """
     Create a TRE event from the given arguments. The event has a new UUID
@@ -191,15 +192,16 @@ def create_event(
         validate_event(event=prior_event, schema_name=prior_event_schema_name)
         logger.info('copying prior_event UUIDs')
         # Use [:] to copy (not reference) prior UUIDs
-        event_uuids = prior_event[KEY_UUIDS][:]        
+        event_uuids = prior_event[KEY_UUIDS][:]
     else:
         logger.info('no prior_event found')
 
-    # Create new UUID and corresponding key name (with producer name)
-    key_uuid = f'{producer}{UUID_KEY_SUFFIX}'
-    event_uuid = str(uuid.uuid4())
-    logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
-    event_uuids.append({key_uuid: event_uuid})
+    # Create new UUID and corresponding key name (with producer name), per step function
+    if add_uuid:
+        key_uuid = f'{producer}{UUID_KEY_SUFFIX}'
+        event_uuid = str(uuid.uuid4())
+        logger.info('key_uuid=%s event_uuid=%s', key_uuid, event_uuid)
+        event_uuids.append({key_uuid: event_uuid})
 
     # Set event's type; prefer consignment_type parameter, fall back to prior
     # message type
