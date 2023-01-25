@@ -32,7 +32,6 @@ pip config set global.index-url https://aws:$CODEARTIFACT_AUTH_TOKEN@${DOMAIN}-$
 
 pip install s3lib
 ```
-
 # Notes
 
 ## json-schema.org
