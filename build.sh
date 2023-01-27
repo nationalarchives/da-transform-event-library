@@ -20,7 +20,7 @@ function build() {
   if latest_tag_branch_commit="$(git describe --exact-match --abbrev=0)"; then
     printf 'latest_tag_branch_commit=%s' "${latest_tag_branch_commit}"
   fi
-  
+
   printf 'Attempting to get latest git tag from anywhere\n'
   local latest_tag_anywhere
   if latest_tag_anywhere="$(
@@ -28,7 +28,7 @@ function build() {
   )"; then
     printf 'latest_tag_anywhere=%s' "${latest_tag_anywhere}"
   fi
-  
+
   local BUILD_VERSION="${1:-${latest_tag_branch_commit:-${latest_tag_anywhere}}}"
 
   # Ensure BUILD_VERSION is set (i.e. ":?")

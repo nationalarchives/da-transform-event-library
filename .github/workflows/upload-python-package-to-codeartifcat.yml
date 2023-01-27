@@ -62,9 +62,9 @@ jobs:
       - name: Deploy to AWS CodeArtifact (main branch only)
         if: github.ref_name == 'main'
         run: |
-          export TWINE_USERNAME=${{ secrets.AWS_USER_NAME }} 
+          export TWINE_USERNAME=${{ secrets.AWS_USER_NAME }}
           export TWINE_PASSWORD=`aws codeartifact get-authorization-token --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --region eu-west-2 --query authorizationToken --output text`
-          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --region ${{ secrets.AWS_REGION }} --format pypi --query repositoryEndpoint --output text`          
+          export TWINE_REPOSITORY_URL=`aws codeartifact get-repository-endpoint --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT }} --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --region ${{ secrets.AWS_REGION }} --format pypi --query repositoryEndpoint --output text`
           twine upload dist/*
           sleep 10s
           aws codeartifact login --tool pip --repository ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_NAME }} --domain ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_DOMAIN }} --domain-owner ${{ secrets.AWS_CODEARTIFACT_REPOSITORY_ACCOUNT}} --region ${{ secrets.AWS_REGION }}

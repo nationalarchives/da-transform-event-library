@@ -16,8 +16,8 @@ to update the package.
 **NOTE :** If any alterations need to be made to this package, please remember to update the "version" parameter in
 the setup.py file, or the package will fail to update due to a versioning conflict.
 
-**ADDITIONAL NOTE:** The workflow that updates this package also runs the local tests, so these will need to pass 
-in order to update this package. 
+**ADDITIONAL NOTE:** The workflow that updates this package also runs the local tests, so these will need to pass
+in order to update this package.
 
 ### Building the package
 
