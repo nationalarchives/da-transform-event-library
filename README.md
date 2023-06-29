@@ -2,7 +2,7 @@
 
 Common Python Tre API for lambda functions.
 
-You can find a comprehensive read a comprehensive read through for updating setting up
+You can find a comprehensive read through for updating setting up
 code repository and domains [at this link here](https://github.com/nationalarchives/da-transform-dev-documentation/blob/master/runbooks/github-actions/uploading_software_to_artifactory.md)
 
 The current domain for this package is - tna-da-transform-domain
