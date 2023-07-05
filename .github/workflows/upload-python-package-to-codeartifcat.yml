@@ -22,7 +22,7 @@ jobs:
           cache: 'pip'
       - name: Get the version to use to tag this build
         id: build-tag
-        uses: nationalarchives/tre-github-actions/.github/actions/get-next-version@0.0.1
+        uses: nationalarchives/da-tre-github-actions/.github/actions/get-next-version@0.0.1
         with:
           repo-name: ${{ github.event.repository.name }}
       - name: Diagnostic info
